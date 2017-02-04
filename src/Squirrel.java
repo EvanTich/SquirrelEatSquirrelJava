@@ -9,7 +9,6 @@ public class Squirrel {
             BOUNCEHEIGHT = 20; // max height in pixels
 
     protected Point pos;
-    protected Point lastPos;
 
     protected int size;
     private int bounce;
@@ -22,7 +21,6 @@ public class Squirrel {
 
     public Squirrel() {
         pos = new Point(0, 0);
-        lastPos = pos.clone();
         facingRight = true;
 
         size = 1;
@@ -33,8 +31,6 @@ public class Squirrel {
     public void bounce(boolean moving) {
         if(!moving)
             return;
-
-        lastPos = pos.clone();
 
         bounce += movingDown ? -2 : 1;
 
