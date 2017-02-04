@@ -26,7 +26,8 @@ public class Player extends Squirrel {
     }
 
     public void update() {
-        bounce();
+        // TODO: fix holding two opposite directions at once, use XOR (x ^ y) probably
+        bounce(moveUp || moveDown || moveLeft || moveRight);
 
         if(moveLeft)
             pos.add(MOVERATE, 0);

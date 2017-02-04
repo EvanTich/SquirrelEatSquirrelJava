@@ -33,8 +33,8 @@ public class EasyKey implements KeyListener {
             keys.removeIf(k -> k.equals(e.getKeyCode()));
     }
 
-    public static boolean keyPressed(char c) {
-        return keys.contains((int) c);
+    public static boolean keyPressed(int c) {
+        return keys.contains(c);
     }
 
     /**

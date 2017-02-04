@@ -17,20 +17,20 @@ public class Enemy extends Squirrel {
         pos = new Point(x, y);
         move = new Point(dx, dy);
 
-        size = random(50, 0) + Player.player.getSize();
+        size = random(160, 0) + Player.player.getSize();
 
-        facingRight = move.getX() > 0;
+        facingRight = move.getX() < 0;
     }
 
     public void update() {
-        bounce();
+        bounce(true);
 
         pos.add(move);
 
-        if(Math.random() /* [0, 1) */ < (2 / 100)) {
+        if(Math.random() * 100 < TURNCHANCE) {
             move = new Point(random(5, 3), random(5, 3));
 
-            facingRight = move.getX() > 0;
+            facingRight = move.getX() < 0;
         }
     }
 

@@ -14,7 +14,7 @@ public class Game extends JPanel {
             NUMGRASS = 80,
             NUMSQUIRRELS = 30,
             WINSIZE = 300,
-            CAMERASLACK = 90;
+            CAMERASLACK = 45; // from the middle of the screen, pixels
 
     private Player player;
     private List<Enemy> enemies;
@@ -44,22 +44,28 @@ public class Game extends JPanel {
         repaint();
     }
 
-    public void keys() {
-        if(EasyKey.keyPressed('w') || EasyKey.keyPressed((char)38)) {
+    private void keys() {
+        // up, w
+        if(EasyKey.keyPressed(87) || EasyKey.keyPressed(38))
             player.setMoveUp(true);
-            player.setMoveDown(false);
-        } else if(EasyKey.keyPressed('a') || EasyKey.keyPressed((char)37)) {
+        else player.setMoveUp(false);
+
+        // left, a
+        if(EasyKey.keyPressed(65) || EasyKey.keyPressed((37))) {
             player.setMoveLeft(true);
-            player.setMoveRight(false);
-            player.setFacingRight(false);
-        } else if(EasyKey.keyPressed('s') || EasyKey.keyPressed((char)40)) {
-            player.setMoveDown(true);
-            player.setMoveUp(false);
-        } else if(EasyKey.keyPressed('d') || EasyKey.keyPressed((char)39)) {
-            player.setMoveRight(true);
-            player.setMoveLeft(false);
             player.setFacingRight(true);
-        }
+        } else player.setMoveLeft(false);
+
+        // down, s
+        if(EasyKey.keyPressed(83) || EasyKey.keyPressed(40))
+            player.setMoveDown(true);
+        else player.setMoveDown(false);
+
+        // right, d
+        if(EasyKey.keyPressed(68) || EasyKey.keyPressed(39)) {
+            player.setMoveRight(true);
+            player.setFacingRight(false);
+        } else player.setMoveRight(false);
 
         if(EasyKey.noPress()) {
             player.setMoveUp(false);
@@ -69,9 +75,8 @@ public class Game extends JPanel {
         }
     }
 
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
+    public void paint(Graphics g) {
+        super.paint(g);
 
         setOpaque(true);
         setBackground(Color.GREEN);
@@ -84,7 +89,7 @@ public class Game extends JPanel {
                 continue;
             }
 
-            g2d.drawImage(p.getSprite(), p.getPos().getX(), p.getPos().getY(), null);
+            g.drawImage(p.getSprite(), p.getPos().getX(), p.getPos().getY(), null);
         }
 
         // draw enemies
@@ -99,10 +104,10 @@ public class Game extends JPanel {
                 continue;
 
             BufferedImage sqrl = GivingTree.getSquirrel();
-            int w = sqrl.getWidth() * e.getSize() / 24,
-                h = sqrl.getHeight() * e.getSize() / 24;
+            int w = (int)(sqrl.getWidth() * e.getSize() / 16.0),
+                h = (int)(sqrl.getHeight() * e.getSize() / 16.0);
 
-            g2d.drawImage(
+            g.drawImage(
                     sqrl,
                     e.getPos().getX() + w,
                     e.getPos().getY() - e.getBounceHeight(),
@@ -114,10 +119,10 @@ public class Game extends JPanel {
 
         // draw player
         BufferedImage sqrl = GivingTree.getSquirrel();
-        int w = sqrl.getWidth() * player.getSize() / 24,
-            h = sqrl.getHeight() * player.getSize() / 24;
+        int w = (int)(sqrl.getWidth() * player.getSize() / 16.0),
+            h = (int)(sqrl.getHeight() * player.getSize() / 16.0);
 
-        g2d.drawImage(
+        g.drawImage(
                 sqrl,
                 player.getPos().getX() + w,
                 player.getPos().getY() - player.getBounceHeight(),
@@ -137,6 +142,7 @@ public class Game extends JPanel {
         Point middle = new Point(Main.WINWIDTH / 2, Main.WINHEIGHT / 2);
         Point player = this.player.getPos();
 
+        // TODO: slack box is not working, fix dx and dy
         int dx = player.getX() - middle.getX() - CAMERASLACK,
             dy = player.getY() - middle.getY() - CAMERASLACK;
 
