@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Game extends JPanel {
 
     public static final int
-            NUMGRASS = 80,
+            NUMGRASS = 50,
             NUMSQUIRRELS = 30,
             WINSIZE = 300,
             CAMERASLACK = 45; // from the middle of the screen, pixels
@@ -28,7 +28,7 @@ public class Game extends JPanel {
         enemies = new ArrayList<>();
         grass = new ArrayList<>();
 
-        for(int i = 0; i < 10; i++)
+        for(int i = 0; i < NUMGRASS / 2; i++)
             grass.add( new Grass((int)(Math.random() * Main.WINWIDTH), (int)(Math.random() * Main.WINHEIGHT)) );
     }
 
@@ -37,6 +37,17 @@ public class Game extends JPanel {
 
         player.update();
         enemies.forEach(Enemy::update);
+
+        Enemy colliding = player.collidingWith(enemies);
+        if(colliding != null) {
+            if(colliding.getSize() > player.getSize()) {
+                colliding.eat(player);
+                gameOver = true;
+            } else {
+                player.eat(colliding);
+                enemies.remove(colliding);
+            }
+        }
 
         transformSprites();
         spawnThings();
@@ -83,13 +94,13 @@ public class Game extends JPanel {
 
         // draw grass
         for(int i = 0; i < grass.size(); i++) {
-            Grass p = grass.get(i);
-            if(outsideArea(p.getPos())) {
-                grass.remove(i--);
+            Grass grass = this.grass.get(i);
+            if(outsideArea(grass.getPos())) {
+                this.grass.remove(i--);
                 continue;
             }
 
-            g.drawImage(p.getSprite(), p.getPos().getX(), p.getPos().getY(), null);
+            g.drawImage(grass.getSprite(), grass.getPos().getX(), grass.getPos().getY(), null);
         }
 
         // draw enemies
@@ -100,37 +111,23 @@ public class Game extends JPanel {
                 continue;
             }
 
-            if(e.getPos().getX() < 0 || e.getPos().getY() < 0)
-                continue;
-
-            BufferedImage sqrl = GivingTree.getSquirrel();
-            int w = (int)(sqrl.getWidth() * e.getSize() / 16.0),
-                h = (int)(sqrl.getHeight() * e.getSize() / 16.0);
-
-            g.drawImage(
-                    sqrl,
-                    e.getPos().getX() + w,
-                    e.getPos().getY() - e.getBounceHeight(),
-                    w * (e.isFacingRight() ? 1 : -1),
-                    h,
-                    null
-            );
+            drawSquirrel(g, e);
         }
 
         // draw player
-        BufferedImage sqrl = GivingTree.getSquirrel();
-        int w = (int)(sqrl.getWidth() * player.getSize() / 16.0),
-            h = (int)(sqrl.getHeight() * player.getSize() / 16.0);
+        drawSquirrel(g, player);
 
+    }
+
+    private void drawSquirrel(Graphics g, Squirrel squirrel) {
         g.drawImage(
-                sqrl,
-                player.getPos().getX() + w,
-                player.getPos().getY() - player.getBounceHeight(),
-                w * (player.isFacingRight() ? 1 : -1),
-                h,
+                GivingTree.getSquirrel(),
+                squirrel.getPos().getX(),
+                squirrel.getPos().getY() - squirrel.getBounceHeight(),
+                squirrel.getImgWidth() * (squirrel.isFacingRight() ? 1 : -1),
+                squirrel.getImgHeight(),
                 null
         );
-
     }
 
     private boolean outsideArea(Point p) {
@@ -138,28 +135,47 @@ public class Game extends JPanel {
                 p.getY() < -Main.WINHEIGHT * .5 || p.getY() > Main.WINHEIGHT * 1.5;
     }
 
+    /**
+     * Works now.
+     * Transforms all sprites on screen so they will move with the player.
+     *
+     * Only moves the sprites when the player is outside the slack box.
+     */
     private void transformSprites() {
         Point middle = new Point(Main.WINWIDTH / 2, Main.WINHEIGHT / 2);
         Point player = this.player.getPos();
 
-        // TODO: slack box is not working, fix dx and dy
-        int dx = player.getX() - middle.getX() - CAMERASLACK,
+        int dx, dy;
+        if(player.getX() < middle.getX() - CAMERASLACK)
+            dx = player.getX() - middle.getX() + CAMERASLACK;
+        else if(player.getX() > middle.getX() + CAMERASLACK)
+            dx = player.getX() - middle.getX() - CAMERASLACK;
+        else dx = 0;
+
+        if(player.getY() < middle.getY() - CAMERASLACK)
+            dy = player.getY() - middle.getY() + CAMERASLACK;
+        else if(player.getY() > middle.getY() + CAMERASLACK)
             dy = player.getY() - middle.getY() - CAMERASLACK;
+        else dy = 0;
 
         if(Math.abs(dx) > 0 || Math.abs(dy) > 0) {
-            enemies.forEach(e -> e.getPos().add(dx, dy));
-            grass.forEach(g -> g.getPos().add(dx, dy));
+            enemies.forEach(e -> e.getPos().add(-dx, -dy));
+            grass.forEach(g -> g.getPos().add(-dx, -dy));
 
             player.add(-dx, -dy);
         }
 
     }
 
+    /**
+     * This function/method spawns new squirrels and grass objects.
+     */
     private void spawnThings() {
-        double rand1 = Math.random() * (NUMSQUIRRELS - enemies.size());
-        for(int i = 0; i < rand1; i++) {
+
+        for(int i = (int)(Math.random() * (NUMSQUIRRELS - enemies.size()) / 2); i >= 0; i--) {
             if(enemies.size() >= NUMSQUIRRELS)
                 break;
+
             double rand = Math.random();
             if(rand < .25) // SPAWN AT TOP
                 enemies.add( new Enemy((int) (Math.random() * Main.WINWIDTH), 0) );
@@ -171,9 +187,12 @@ public class Game extends JPanel {
                 enemies.add( new Enemy(Main.WINWIDTH, (int) (Math.random() * Main.WINHEIGHT)) );
         }
 
-        double rand2 = Math.random() * (NUMGRASS - enemies.size());
-        for(int i = 0; i < rand2; i++) {
-            if(grass.size() >= NUMSQUIRRELS)
+        if(!player.isMoving())
+            return;
+
+        for(int i = (int)(Math.random() * (NUMGRASS - grass.size()) / 2); i >= 0; i--) {
+            // was grass.size() >= NUMSQUIRRELS before, lol
+            if(grass.size() >= NUMGRASS)
                 break;
 
             double rand = Math.random();

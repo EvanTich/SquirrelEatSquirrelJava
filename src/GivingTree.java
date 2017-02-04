@@ -42,4 +42,12 @@ public class GivingTree {
     public static BufferedImage getSquirrel() {
         return SQUIRRELIMG;
     }
+
+    public static int getSquirrelWidth() {
+        return SQUIRRELIMG.getWidth();
+    }
+
+    public static int getSquirrelHeight() {
+        return SQUIRRELIMG.getHeight();
+    }
 }

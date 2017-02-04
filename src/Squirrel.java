@@ -29,10 +29,14 @@ public class Squirrel {
     }
 
     public void bounce(boolean moving) {
-        if(!moving)
+        if(!moving) {
+            if(bounce > 0)
+                bounce -= 3;
+            else bounce = 0;
             return;
+        }
 
-        bounce += movingDown ? -2 : 1;
+        bounce += movingDown ? -3 : 1;
 
         if(bounce >= BOUNCERATE)
             movingDown = true;
@@ -48,11 +52,29 @@ public class Squirrel {
         return size;
     }
 
+    public final int getImgWidth() {
+        return (int)(GivingTree.getSquirrelWidth() * size / 16.0);
+    }
+
+    public final int getImgHeight() {
+        return (int)(GivingTree.getSquirrelHeight() * size / 16.0);
+    }
+
     public final int getBounceHeight() {
         return (int) (bounce * 1f / BOUNCERATE * BOUNCEHEIGHT);
     }
 
     public final boolean isFacingRight() {
         return facingRight;
+    }
+
+    public final void eat(Squirrel other) {
+        size += other.size;
+    }
+
+    public final boolean equals(Squirrel other) {
+        return pos.equals(other.pos) &&
+                size == other.size &&
+                facingRight == other.facingRight;
     }
 }

@@ -17,7 +17,10 @@ public class Enemy extends Squirrel {
         pos = new Point(x, y);
         move = new Point(dx, dy);
 
-        size = random(160, 0) + Player.player.getSize();
+        // can be as much as 2x larger than the player
+        // also done because some of the squirrels were upside down and backwards.
+        int pSize = Player.player.getSize();
+        size = random(pSize, 0) + pSize + 1; // + 1 so they cant be size 0 (invisible and a waste)
 
         facingRight = move.getX() < 0;
     }
@@ -35,6 +38,6 @@ public class Enemy extends Squirrel {
     }
 
     private static int random(int factor, int insideNumber) {
-        return ((int)(Math.random() * factor) + insideNumber) * Math.random() < .5 ? 1 : -1;
+        return ((int)(Math.random() * factor) + insideNumber) * (Math.random() < .5 ? 1 : -1);
     }
 }
