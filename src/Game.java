@@ -12,7 +12,7 @@ public class Game extends JPanel {
 
     public static final int
             NUMGRASS = 50,
-            NUMSQUIRRELS = 30,
+            NUMSQUIRRELS = 20,
             WINSIZE = 300,
             CAMERASLACK = 45; // from the middle of the screen, pixels
 
@@ -20,32 +20,35 @@ public class Game extends JPanel {
     private List<Enemy> enemies;
     private List<Grass> grass;
 
-    private boolean gameOver;
+    private int invincibilityFrames;
+    private int livesLeft;
+
+    private Font font;
 
     public Game() {
-        player = new Player();
-
-        enemies = new ArrayList<>();
-        grass = new ArrayList<>();
-
-        for(int i = 0; i < NUMGRASS / 2; i++)
-            grass.add( new Grass((int)(Math.random() * Main.WINWIDTH), (int)(Math.random() * Main.WINHEIGHT)) );
+        reset();
+        font = new Font("default", Font.BOLD, 28);
     }
 
     public void update() {
-        keys();
 
-        player.update();
-        enemies.forEach(Enemy::update);
+        if(!gameOver()) {
+            keys();
 
-        Enemy colliding = player.collidingWith(enemies);
-        if(colliding != null) {
-            if(colliding.getSize() > player.getSize()) {
-                colliding.eat(player);
-                gameOver = true;
-            } else {
-                player.eat(colliding);
-                enemies.remove(colliding);
+            if(invincibilityFrames > 0)
+                invincibilityFrames--;
+            player.update();
+            enemies.forEach(Enemy::update);
+
+            Enemy colliding = player.intersects(enemies);
+            if (colliding != null && Math.abs(colliding.getSize() - player.getSize()) >= 5) {
+                if (colliding.getSize() > player.getSize() && invincibilityFrames <= 0) {
+                    livesLeft--;
+                    invincibilityFrames = 23;
+                } else {
+                    player.eat(colliding);
+                    enemies.remove(colliding);
+                }
             }
         }
 
@@ -117,6 +120,15 @@ public class Game extends JPanel {
         // draw player
         drawSquirrel(g, player);
 
+        g.setColor(Color.BLACK);
+
+        if(!g.getFont().equals(font))
+            g.setFont(font);
+
+        if(player.getSize() > WINSIZE)
+            g.drawString("YOU HAVE ACHIEVED OMEGA SQUIRREL!", 10, Main.WINHEIGHT / 2);
+        else if(gameOver())
+            g.drawString("Game over. R to restart.", Main.WINWIDTH / 4, Main.WINHEIGHT / 2);
     }
 
     private void drawSquirrel(Graphics g, Squirrel squirrel) {
@@ -205,5 +217,21 @@ public class Game extends JPanel {
             else // SPAWN AT RIGHT
                 grass.add( new Grass(Main.WINWIDTH, (int) (Math.random() * Main.WINHEIGHT)) );
         }
+    }
+
+    public void reset() {
+        player = new Player();
+
+        enemies = new ArrayList<>();
+        grass = new ArrayList<>();
+
+        livesLeft = 3;
+
+        for(int i = 0; i < NUMGRASS / 2; i++)
+            grass.add( new Grass((int)(Math.random() * Main.WINWIDTH), (int)(Math.random() * Main.WINHEIGHT)) );
+    }
+
+    public boolean gameOver() {
+        return livesLeft <= 0;
     }
 }

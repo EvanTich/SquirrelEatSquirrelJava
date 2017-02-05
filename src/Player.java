@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.List;
 
 /**
@@ -8,7 +9,8 @@ public class Player extends Squirrel {
 
     public static final int
             MOVERATE = 9,
-            STARTSIZE = 25;
+            STARTSIZE = 25,
+            MAXSIZE = 500;
 
     public static Player player;
 
@@ -39,11 +41,19 @@ public class Player extends Squirrel {
             pos.add(0, -MOVERATE);
         if(moveDown)
             pos.add(0, MOVERATE);
+
+        if(size > MAXSIZE)
+            size = MAXSIZE;
     }
 
-    public Enemy collidingWith(List<Enemy> enemies) {
-        // TODO: return the enemy the player is colliding with
+    public Enemy intersects(List<Enemy> enemies) {
+        // TODO: when facing right the collision box is to the right of the squirrels, fix in super class
         // remember: pos is the top right of the player
+        Rectangle collider = getCollisionBox();
+
+        for(Enemy e : enemies)
+            if(collider.intersects(e.getCollisionBox()))
+                return e;
 
         // return null if not colliding with any enemy
         return null;

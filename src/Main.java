@@ -78,8 +78,13 @@ public class Main {
                 }
             }
 
-            if(EasyKey.keyPressed((char) 27))
+            // escape key
+            if(EasyKey.keyPressed(27))
                 running = false;
+
+            // r/R key
+            if(EasyKey.keyPressed(82))
+                game.reset();
         }
 
         frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));

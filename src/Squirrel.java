@@ -1,3 +1,5 @@
+import java.awt.*;
+
 /**
  * @author Evan Tichenor (evan.tichenor@gmail.com)
  * @version 1.0, 1/29/2017
@@ -64,12 +66,16 @@ public class Squirrel {
         return (int) (bounce * 1f / BOUNCERATE * BOUNCEHEIGHT);
     }
 
+    public final Rectangle getCollisionBox() {
+        return new Rectangle(pos.getX(), pos.getY() + getBounceHeight(), getImgWidth(), getImgHeight());
+    }
+
     public final boolean isFacingRight() {
         return facingRight;
     }
 
     public final void eat(Squirrel other) {
-        size += other.size;
+        size += other.size / 3;
     }
 
     public final boolean equals(Squirrel other) {

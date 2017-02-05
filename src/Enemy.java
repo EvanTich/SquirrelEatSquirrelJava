@@ -4,7 +4,7 @@
  */
 public class Enemy extends Squirrel {
 
-    public static final int TURNCHANCE = 2;
+    public static final int TURNCHANCE = 2, MAXSIZE = 150;
 
     private Point move;
 
@@ -21,6 +21,8 @@ public class Enemy extends Squirrel {
         // also done because some of the squirrels were upside down and backwards.
         int pSize = Player.player.getSize();
         size = random(pSize, 0) + pSize + 1; // + 1 so they cant be size 0 (invisible and a waste)
+        if(size > MAXSIZE)
+            size = MAXSIZE;
 
         facingRight = move.getX() < 0;
     }
