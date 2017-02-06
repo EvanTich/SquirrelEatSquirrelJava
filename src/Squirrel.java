@@ -67,7 +67,9 @@ public class Squirrel {
     }
 
     public final Rectangle getCollisionBox() {
-        return new Rectangle(pos.getX(), pos.getY() + getBounceHeight(), getImgWidth(), getImgHeight());
+        if(facingRight)
+            return new Rectangle(pos.getX(), pos.getY() + getBounceHeight(), getImgWidth(), getImgHeight());
+        return new Rectangle(pos.getX() - getImgWidth(), pos.getY() + getBounceHeight(), getImgWidth(), getImgHeight());
     }
 
     public final boolean isFacingRight() {

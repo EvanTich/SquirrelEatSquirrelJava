@@ -47,8 +47,6 @@ public class Player extends Squirrel {
     }
 
     public Enemy intersects(List<Enemy> enemies) {
-        // TODO: when facing right the collision box is to the right of the squirrels, fix in super class
-        // remember: pos is the top right of the player
         Rectangle collider = getCollisionBox();
 
         for(Enemy e : enemies)
