@@ -1,8 +1,5 @@
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
 import java.io.*;
 
 /**
@@ -12,22 +9,21 @@ import java.io.*;
 public class GivingTree {
 
     public static final BufferedImage SQUIRRELIMG;
-
     public static final BufferedImage[] GRASSIMGS;
 
     static {
-        SQUIRRELIMG = loadSprite("sprites/squirrel.png");
+        SQUIRRELIMG = loadSprite("/sprites/squirrel.png");
         GRASSIMGS = new BufferedImage[4];
 
         for(int i = 0; i < 4; i++)
-            GRASSIMGS[i] = loadSprite( String.format("sprites/grass%1d.png", i + 1) );
+            GRASSIMGS[i] = loadSprite( String.format("/sprites/grass%1d.png", i + 1) );
     }
 
     public static BufferedImage loadSprite(String path) {
         BufferedImage sprite = null;
 
         try {
-            sprite = ImageIO.read(new File(path));
+            sprite = ImageIO.read(GivingTree.class.getResourceAsStream(path));
         } catch (IOException e) {
             e.printStackTrace();
         }

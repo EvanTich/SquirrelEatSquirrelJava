@@ -31,20 +31,22 @@ public class Game extends JPanel {
     }
 
     public void update() {
-
         if(!gameOver()) {
             keys();
 
             if(invincibilityFrames > 0)
                 invincibilityFrames--;
+
             player.update();
             enemies.forEach(Enemy::update);
 
             Enemy colliding = player.intersects(enemies);
             if (colliding != null && Math.abs(colliding.getSize() - player.getSize()) >= 5) {
-                if (colliding.getSize() > player.getSize() && invincibilityFrames <= 0) {
-                    livesLeft--;
-                    invincibilityFrames = 23;
+                if (colliding.getSize() > player.getSize()) {
+                    if(invincibilityFrames <= 0) {
+                        livesLeft--;
+                        invincibilityFrames = 23;
+                    }
                 } else {
                     player.eat(colliding);
                     enemies.remove(colliding);
@@ -89,8 +91,8 @@ public class Game extends JPanel {
         }
     }
 
-    public void paint(Graphics g) {
-        super.paint(g);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
         setOpaque(true);
         setBackground(Color.GREEN);
@@ -119,6 +121,11 @@ public class Game extends JPanel {
 
         // draw player
         drawSquirrel(g, player);
+
+        // draw lives
+        g.setColor(Color.RED);
+        for(int i = 0; i < livesLeft; i++)
+            g.fillRect(20, 20 + i * 11, 20, 10);
 
         g.setColor(Color.BLACK);
 
