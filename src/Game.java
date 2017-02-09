@@ -62,23 +62,23 @@ public class Game extends JPanel {
 
     private void keys() {
         // up, w
-        if(EasyKey.keyPressed(87) || EasyKey.keyPressed(38))
+        if(EasyKey.keyPressed(87, 38))
             player.setMoveUp(true);
         else player.setMoveUp(false);
 
         // left, a
-        if(EasyKey.keyPressed(65) || EasyKey.keyPressed((37))) {
+        if(EasyKey.keyPressed(65, 37)) {
             player.setMoveLeft(true);
             player.setFacingRight(true);
         } else player.setMoveLeft(false);
 
         // down, s
-        if(EasyKey.keyPressed(83) || EasyKey.keyPressed(40))
+        if(EasyKey.keyPressed(83, 40))
             player.setMoveDown(true);
         else player.setMoveDown(false);
 
         // right, d
-        if(EasyKey.keyPressed(68) || EasyKey.keyPressed(39)) {
+        if(EasyKey.keyPressed(68, 39)) {
             player.setMoveRight(true);
             player.setFacingRight(false);
         } else player.setMoveRight(false);

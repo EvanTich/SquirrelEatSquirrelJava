@@ -37,6 +37,13 @@ public class EasyKey implements KeyListener {
         return keys.contains(c);
     }
 
+    public static boolean keyPressed(int... ints) {
+        for(int key : ints)
+            if(keys.contains(key))
+                return true;
+        return false;
+    }
+
     /**
      * Used to fix direction bug for the snake.
      */
@@ -47,4 +54,5 @@ public class EasyKey implements KeyListener {
     public static boolean noPress() {
         return keys.isEmpty();
     }
+
 }
