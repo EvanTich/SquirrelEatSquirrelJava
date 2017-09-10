@@ -1,3 +1,5 @@
+import javafx.scene.shape.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -139,12 +141,13 @@ public class Game extends JPanel {
     }
 
     private void drawSquirrel(Graphics g, Squirrel squirrel) {
+        java.awt.Rectangle bb = squirrel.getCollisionBox(); // way easier now, plus only needs to edit one place
         g.drawImage(
                 GivingTree.getSquirrel(),
-                squirrel.getPos().getX(),
-                squirrel.getPos().getY() - squirrel.getBounceHeight(),
-                squirrel.getImgWidth() * (squirrel.isFacingRight() ? 1 : -1),
-                squirrel.getImgHeight(),
+                (int) bb.getX(),
+                (int) bb.getY(),
+                (int) bb.getWidth() * (squirrel.isFacingRight() ? 1 : -1),
+                (int) bb.getHeight(),
                 null
         );
     }
@@ -206,6 +209,7 @@ public class Game extends JPanel {
                 enemies.add( new Enemy(Main.WINWIDTH, (int) (Math.random() * Main.WINHEIGHT)) );
         }
 
+        // don't spawn grass if not moving
         if(!player.isMoving())
             return;
 

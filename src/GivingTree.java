@@ -8,15 +8,15 @@ import java.io.*;
  */
 public class GivingTree {
 
-    public static final BufferedImage SQUIRRELIMG;
-    public static final BufferedImage[] GRASSIMGS;
+    public static final BufferedImage SQUIRREL_IMG;
+    public static final BufferedImage[] GRASS_IMGS;
 
     static {
-        SQUIRRELIMG = loadSprite("/sprites/squirrel.png");
-        GRASSIMGS = new BufferedImage[4];
+        SQUIRREL_IMG = loadSprite("/sprites/squirrel.png");
+        GRASS_IMGS = new BufferedImage[4];
 
         for(int i = 0; i < 4; i++)
-            GRASSIMGS[i] = loadSprite( String.format("/sprites/grass%1d.png", i + 1) );
+            GRASS_IMGS[i] = loadSprite( String.format("/sprites/grass%1d.png", i + 1) );
     }
 
     public static BufferedImage loadSprite(String path) {
@@ -32,18 +32,18 @@ public class GivingTree {
     }
 
     public static BufferedImage getRandomGrass() {
-        return GRASSIMGS[(int)(Math.random() * GRASSIMGS.length)];
+        return GRASS_IMGS[(int)(Math.random() * GRASS_IMGS.length)];
     }
 
     public static BufferedImage getSquirrel() {
-        return SQUIRRELIMG;
+        return SQUIRREL_IMG;
     }
 
     public static int getSquirrelWidth() {
-        return SQUIRRELIMG.getWidth();
+        return SQUIRREL_IMG.getWidth();
     }
 
     public static int getSquirrelHeight() {
-        return SQUIRRELIMG.getHeight();
+        return SQUIRREL_IMG.getHeight();
     }
 }
